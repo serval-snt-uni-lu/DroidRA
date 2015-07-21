@@ -1,0 +1,6 @@
+1. when class name is (.*), try to infer it through its known values (e.g., /Users/li.li/Project/apktool/apks/mobi.infolife.iShopping.apk)
+2. Remove all (.*) before bosting
+
+3. Study of dynamic code loading, trying to infer the loaded library as much as possible
+
+4. A study of dynamic code loading and reflection usage
