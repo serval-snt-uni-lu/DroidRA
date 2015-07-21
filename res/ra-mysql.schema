@@ -1,0 +1,44 @@
+DROP TABLE IF EXISTS `Application`;
+DROP TABLE IF EXISTS `Unit`;
+DROP TABLE IF EXISTS `IClass`;
+DROP TABLE IF EXISTS `IParameter`;
+
+
+CREATE TABLE `Application` (
+  `checksum` varchar(512) NOT NULL,
+  `pkg` varchar(512) NOT NULL,
+  `version` int DEFAULT NULL,
+  PRIMARY KEY (`checksum`)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+
+
+CREATE TABLE `Unit` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `checksum` varchar(512) NOT NULL,
+  `cls_name` varchar(512) NOT NULL,
+  `method_sig` varchar(512) NOT NULL,
+  `unit` varchar(512) NOT NULL,
+  `icls_id` int,
+  `iparam0_id` int,
+  `iparam1_id` int,
+  `iparam2_id` int,
+  `iparam3_id` int,
+  `iparam4_id` int,
+  `iparam5_id` int,
+  PRIMARY KEY (`id`)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+
+
+CREATE TABLE `IClass` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `cls` varchar(512) NOT NULL,
+  `name` int NOT NULL,
+  PRIMARY KEY (`st`)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+
+
+CREATE TABLE `IParameter` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `str` varchar(512) NOT NULL,
+  PRIMARY KEY (id)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;

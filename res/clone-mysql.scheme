@@ -1,0 +1,44 @@
+CREATE TABLE `apps` (
+  `sha256` varchar(125) NOT NULL,
+  `pkg` varchar(512) NOT NULL,
+  `sdk_version` varchar(512) NOT NULL,
+  `app_version` varchar(512),
+  `app_version_name` varchar(512),
+  `locales` varchar(512),
+  `uses_permissions` varchar(512),
+  `uses_features` varchar(512),
+  PRIMARY KEY (`sha256`)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+
+
+CREATE TABLE `cert_owner` (
+  `sha256` varchar(125) NOT NULL,
+  `owner` varchar(512) NOT NULL,
+  PRIMARY KEY (`sha256`)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+
+CREATE TABLE `markets` (
+  `sha256` varchar(125) NOT NULL,
+  `name` varchar(512) NOT NULL,
+  PRIMARY KEY (`sha256`)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+
+CREATE TABLE `similar_pairs` (
+  `app1_sha256` varchar(125) NOT NULL,
+  `app2_sha256` varchar(125) NOT NULL,
+  `identical` int NOT NULL,
+  `similar` int NOT NULL,
+  `new` int NOT NULL,
+  `deleted` int NOT NULL,
+  `similarity` varchar(125)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+
+CREATE TABLE `similar_pairs_simidroid` (
+  `app1_sha256` varchar(125) NOT NULL,
+  `app2_sha256` varchar(125) NOT NULL,
+  `identical` int NOT NULL,
+  `similar` int NOT NULL,
+  `new` int NOT NULL,
+  `deleted` int NOT NULL,
+  `similarity` varchar(125)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;

@@ -1,0 +1,206 @@
+class dummy {
+  query <java.lang.Class: java.lang.Class forName(java.lang.String,boolean,java.lang.ClassLoader)> {
+    0: type String;
+  }
+
+  query <java.lang.Class: java.net.URL getResource(java.lang.String)> {
+    0: type String;
+  }
+
+  query <java.lang.Class: java.lang.reflect.Field getDeclaredField(java.lang.String)> {
+    0: type String;
+  }
+
+  query <java.lang.Class: java.lang.reflect.Method getMethod(java.lang.String,java.lang.Class[])> {
+    0: type String;
+  }
+
+  query <java.lang.Class: java.lang.reflect.Method getDeclaredMethod(java.lang.String,java.lang.Class[])> {
+    0: type String;
+  }
+
+  query <java.lang.Class: java.lang.reflect.Field getField(java.lang.String)> {
+    0: type String;
+  }
+
+  query <java.lang.Class: java.lang.Class forName(java.lang.String)> {
+    0: type String;
+  }
+
+  query <java.lang.Class: java.io.InputStream getResourceAsStream(java.lang.String)> {
+    0: type String;
+  }
+}
+
+class java.lang.Class {
+  String name_class;
+  
+  super superClass = java.lang.ClassLoader;
+  mod gen superClass: java.lang.Class loadClass(java.lang.String) {
+    0: replace name_class;
+  }
+  
+  mod gen superClass: java.lang.Class loadClass(java.lang.String,boolean) {
+    0: replace name_class;
+  }
+  
+  mod gen superClass: java.lang.Class findClass(java.lang.String) {
+    0: replace name_class;
+  }
+  
+  mod gen superClass: java.lang.Class findLoadedClass(java.lang.String) {
+    0: replace name_class;
+  }
+  
+  mod gen superClass: java.lang.Class findSystemClass(java.lang.String) {
+    0: replace name_class;
+  }
+  
+  mod gen superClass: java.lang.Class defineClass(java.lang.String,java.nio.ByteBuffer,java.security.ProtectionDomain) {
+    0: replace name_class;
+  }
+  
+  mod gen superClass: java.lang.Class defineClass(java.lang.String,byte[],int,int,java.security.ProtectionDomain) {
+    0: replace name_class;
+  }
+  
+  mod gen superClass: java.lang.Class defineClass(java.lang.String,byte[],int,int) {
+    0: replace name_class;
+  }
+  
+  mod gen <java.lang.Class: java.lang.Class forName(java.lang.String)> {
+   0: replace name_class;
+  }
+  
+  mod gen <java.lang.Class: java.lang.Class forName(java.lang.String,boolean,java.lang.ClassLoader)> {
+    0: replace name_class;
+  }
+  
+  query <java.lang.Class: java.lang.Object newInstance()> {
+    -1: type java.lang.Class;
+  }
+}
+
+class java.lang.reflect.Method {
+  Class declaringClass_method;
+  String name_method;
+
+  mod gen <java.lang.Class: java.lang.reflect.Method getDeclaredMethod(java.lang.String,java.lang.Class[])> {
+    -1: replace declaringClass_method;
+    0: replace name_method;
+  }
+
+  mod gen <java.lang.Class: java.lang.reflect.Method getMethod(java.lang.String,java.lang.Class[])> {
+    -1: replace declaringClass_method;
+    0: replace name_method;
+  }
+
+  query <java.lang.reflect.Method: java.lang.Object invoke(java.lang.Object,java.lang.Object[])> {
+    -1: type java.lang.reflect.Method;
+  }
+}
+
+class java.lang.reflect.Constructor {
+  Class declaringClass_constructor;
+  String constructors;
+  
+  mod gen <java.lang.Class: java.lang.reflect.Constructor getConstructor(java.lang.Class[])> {
+    -1: replace declaringClass_constructor;
+  }
+  
+  mod gen <java.lang.Class: java.lang.reflect.Constructor[] getConstructors()> {
+    -1: replace declaringClass_constructor;
+  }
+  
+  query <java.lang.reflect.Constructor: java.lang.Object newInstance(java.lang.Object[])> {
+    -1: type java.lang.reflect.Constructor;
+  }
+}
+
+class java.lang.reflect.Field {
+  Class declaringClass_field;
+  String name_field;
+  
+  mod gen <java.lang.Class: java.lang.reflect.Field getDeclaredField(java.lang.String)> {
+    -1: replace declaringClass_field;
+    0: replace name_field;
+  }
+  
+  mod gen <java.lang.Class: java.lang.reflect.Field getField(java.lang.String)> {
+    -1: replace declaringClass_field;
+    0: replace name_field;
+  }
+
+  query <java.lang.reflect.Field: java.lang.Object get(java.lang.Object)> {
+    -1: type java.lang.reflect.Field;
+  }
+
+  query <java.lang.reflect.Field: boolean getBoolean(java.lang.Object)> {
+    -1: type java.lang.reflect.Field;
+  }
+  
+  query <java.lang.reflect.Field: byte getByte(java.lang.Object)> {
+    -1: type java.lang.reflect.Field;
+  }
+  
+  query <java.lang.reflect.Field: char getChar(java.lang.Object)> {
+    -1: type java.lang.reflect.Field;
+  }
+  
+  query <java.lang.reflect.Field: double getDouble(java.lang.Object)> {
+    -1: type java.lang.reflect.Field;
+  }
+  
+  query <java.lang.reflect.Field: float getFloat(java.lang.Object)> {
+    -1: type java.lang.reflect.Field;
+  }
+  
+  query <java.lang.reflect.Field: int getInt(java.lang.Object)> {
+    -1: type java.lang.reflect.Field;
+  }
+  
+  query <java.lang.reflect.Field: long getLong(java.lang.Object)> {
+    -1: type java.lang.reflect.Field;
+  }
+  
+  query <java.lang.reflect.Field: short getShort(java.lang.Object)> {
+    -1: type java.lang.reflect.Field;
+  }
+  
+  query <java.lang.reflect.Field: void set(java.lang.Object,java.lang.Object)> {
+    -1: type java.lang.reflect.Field;
+  }
+  
+  query <java.lang.reflect.Field: void setBoolean(java.lang.Object,boolean)> {
+    -1: type java.lang.reflect.Field;
+  }
+  
+  query <java.lang.reflect.Field: void setByte(java.lang.Object,byte)> {
+    -1: type java.lang.reflect.Field;
+  }
+  
+  query <java.lang.reflect.Field: void setChar(java.lang.Object,char)> {
+    -1: type java.lang.reflect.Field;
+  }
+  
+  query <java.lang.reflect.Field: void setDouble(java.lang.Object,double)> {
+    -1: type java.lang.reflect.Field;
+  }
+  
+  query <java.lang.reflect.Field: void setFloat(java.lang.Object,float)> {
+    -1: type java.lang.reflect.Field;
+  }
+  
+  query <java.lang.reflect.Field: void setInt(java.lang.Object,int)> {
+    -1: type java.lang.reflect.Field;
+  }
+  
+  query <java.lang.reflect.Field: void setLong(java.lang.Object,long)> {
+    -1: type java.lang.reflect.Field;
+  }
+  
+  query <java.lang.reflect.Field: void setShort(java.lang.Object,short)> {
+    -1: type java.lang.reflect.Field;
+  }
+}
+

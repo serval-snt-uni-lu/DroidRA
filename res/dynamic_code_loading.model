@@ -1,0 +1,21 @@
+class dummy {
+  query <dalvik.system.BaseDexClassLoader: void <init>(java.lang.String,java.lang.String,java.lang.String,java.lang.ClassLoader)> {
+    0: type String;
+  }
+
+  query <dalvik.system.DexClassLoader: void <init>(java.lang.String,java.lang.String,java.lang.String,java.lang.ClassLoader)> {
+    0: type String;
+  }
+  
+  query <dalvik.system.PathClassLoader: void <init>(java.lang.String,java.lang.String,java.lang.String,java.lang.ClassLoader)> {
+    0: type String;
+  }
+  
+  query <dalvik.system.PathClassLoader: void <init>(java.lang.String,java.lang.ClassLoader)> {
+    0: type String;
+  }
+  
+  query <dalvik.system.PathClassLoader: void <init>(java.lang.String,java.lang.String,java.lang.ClassLoader)> {
+    0: type String;
+  }
+}
