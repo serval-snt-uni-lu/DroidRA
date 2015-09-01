@@ -18,5 +18,7 @@ transforms it in a new app where reflective calls are augmented with standard ja
 
 ![DroidRA Overview](images/fig_approach_overview.png)
 
-## Evaluation
+## Tool Availability
 
+We will eventually open-source our tools, along with the associated benchmarks.
+Coming soon.
