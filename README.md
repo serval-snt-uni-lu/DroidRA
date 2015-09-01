@@ -16,7 +16,7 @@ of their associated parameters (i.e., class/method/field names).
 (3) Based on this information, the last module, named BOM, instruments the app and 
 transforms it in a new app where reflective calls are augmented with standard java calls.  
 
-![DroidRA Overview](images/fig_approach_overview.pdf)
+![DroidRA Overview](images/fig_approach_overview.png)
 
 ## Evaluation
 
