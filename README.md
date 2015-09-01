@@ -18,6 +18,12 @@ transforms it in a new app where reflective calls are augmented with standard ja
 
 ![DroidRA Overview](images/fig_approach_overview.png)
 
+## Benchmark Apps
+
+In order to evaluate our approach on the support of existing static analyzers, e.g., FlowDroid or IccTA,
+we provide 11 test cases (4 is avaliable in the current DroidBench project) to assess.
+Excepting the four DroidBench apps, the remaining apps are currently under the benchmark-apps directory.
+
 ## Tool Availability
 
 We will eventually open-source our tools, along with the associated benchmarks.
