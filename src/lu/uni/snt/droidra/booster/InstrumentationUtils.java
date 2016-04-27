@@ -47,11 +47,14 @@ public class InstrumentationUtils
 			return false;
 		}
 		
-		Value arg0 = stmt.getInvokeExpr().getArg(0);
-		
-		if (null == arg0 || "null".equals(arg0.toString()))
+		if (stmt.getInvokeExpr().getArgCount() > 0)
 		{
-			return true;
+			Value arg0 = stmt.getInvokeExpr().getArg(0);
+			
+			if (null == arg0 || "null".equals(arg0.toString()))
+			{
+				return true;
+			}
 		}
 		
 		return false;

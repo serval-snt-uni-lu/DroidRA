@@ -156,7 +156,14 @@ public class ReturnFlowFunctionFactory {
             return Collections.emptySet();
           }
         };
-      } else if (callSite instanceof DefinitionStmt && !(exitStmt instanceof ThrowStmt)) {
+      } else if (callSite instanceof DefinitionStmt && !(exitStmt instanceof ThrowStmt)
+          && !(exitStmt instanceof ReturnVoidStmt)) {
+        // The condition !(exitStmt instanceof ReturnVoidStmt) is due to the fact that Soot
+        // automatically creates call graph edges between calls to <android.os.Handler: boolean
+        // postDelayed(java.lang.Runnable,long)> (and similar methods) and the argument Runnable's
+        // run() method. So even though we have a DefinitionStmt, we may still have a callee with a
+        // void return statement. It has no influence on the objects we are interested in, since the
+        // return value of the post* functions is a boolean.
         if (logger.isDebugEnabled()) {
           logger.debug("Stmt: " + callSite);
         }

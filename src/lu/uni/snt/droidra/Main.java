@@ -1,9 +1,11 @@
 package lu.uni.snt.droidra;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Map;
 
 import lu.uni.snt.droidra.booster.ApkBooster;
@@ -18,6 +20,8 @@ import com.google.gson.Gson;
 
 import edu.psu.cse.siis.coal.DefaultCommandLineArguments;
 import edu.psu.cse.siis.coal.DefaultCommandLineParser;
+import edu.psu.cse.siis.coal.DefaultResult;
+import edu.psu.cse.siis.coal.Result;
 
 /**
  * at soot.toDex.PrimitiveType.getByName(PrimitiveType.java:24)
@@ -80,24 +84,14 @@ public class Main
 	 * 
 	 * @param args
 	 */
+
 	public static void main(String[] args) 
 	{
-		//String apkPath = args[0];
-		//String androidJars = args[1];
-		
-		//String apkPath = "/Users/li.li/Project/gitbitbucket/IccLeaks/all/00621E015191863041E78726B863B7E1374B17FDA690367878D1272B0E44B232.apk";
-		//String apkPath = "/Users/li.li/Project/apktool/apks/mobi.infolife.iShopping.apk";
-		
-		//String androidJars = "/Users/li.li/Project/github/android-platforms";
-		
-		//String apkPath = "testapps/Reflection3.apk";
-		//String forceAndroidJar = "res/framework-android-17.jar"; //androidJars + "/android-18/android.jar";
-		
 		long startTime = System.currentTimeMillis();
 		System.out.println("==>TIME:" + startTime);
 		
 		String apkPath = args[0];
-		String forceAndroidJar = args[1]; //androidJars + "/android-18/android.jar";
+		String forceAndroidJar = args[1];
 		
 		String dexes = null;
 		if (args.length > 2)
@@ -105,41 +99,60 @@ public class Main
 			dexes = args[2];
 		}
 		
-		DroidRAUtils.extractApkInfo(apkPath);
-		
-		GlobalRef.clsPath = forceAndroidJar;
-		
-		String[] args2 = {
-			"-cp", forceAndroidJar,
-			"-model", GlobalRef.coalModelPath,
-			"-input", GlobalRef.WORKSPACE
-		};
-		
-		/*
-		String[] args2 = {
-				"-cp", ".",
-				"-model", "res/full-test.model",
-				"-input", "/Users/li.li/Project/workspace_for_coal/ReflectionTest/bin"
-			};
-		GlobalRef.apkPath = "/Users/li.li/Project/workspace_for_coal/ReflectionTest/bin";
-		GlobalRef.clsPath = ".";	
-		*/	
-		
-		args = args2;
-		
-		
-		if (null != dexes)
+		String apkName = apkPath;
+		if (apkName.contains("/"))
 		{
-			RetargetWithDummyMainGenerator.retargetWithDummyMainGeneration(apkPath, forceAndroidJar, GlobalRef.WORKSPACE, dexes.split(File.pathSeparator));
+			apkName = apkName.substring(apkName.lastIndexOf('/')+1);
+		}
+		
+		init(apkPath, forceAndroidJar, dexes);
+		
+		long afterDummyMain = System.currentTimeMillis();
+		System.out.println("==>TIME:" + afterDummyMain);
+		
+		reflectionAnalysis();
+		toReadableText(apkName);
+		toJson();
+		
+		long afterRA = System.currentTimeMillis();
+		System.out.println("==>TIME:" + afterRA);
+		
+		booster();
+		
+		long afterBooster = System.currentTimeMillis();
+		System.out.println("==>TIME:" + afterBooster);
+		
+		System.out.println("====>TIME_TOTAL:" + startTime + "," + afterDummyMain + "," + afterRA + "," + afterBooster);
+	}
+	
+	public static int test()
+	{
+		return (int) new Object();
+	}
+	
+	public static void init(String apkPath, String forceAndroidJar, String additionalDexes)
+	{
+		DroidRAUtils.extractApkInfo(apkPath);	
+		GlobalRef.clsPath = forceAndroidJar;
+
+		if (null != additionalDexes)
+		{
+			RetargetWithDummyMainGenerator.retargetWithDummyMainGeneration(apkPath, forceAndroidJar, GlobalRef.WORKSPACE, additionalDexes.split(File.pathSeparator));
 		}
 		else
 		{
 			RetargetWithDummyMainGenerator.retargetWithDummyMainGeneration(apkPath, forceAndroidJar, GlobalRef.WORKSPACE);
 		}
+	}
+	
+	public static void reflectionAnalysis()
+	{
 		
-		
-		long afterDummyMain = System.currentTimeMillis();
-		System.out.println("==>TIME:" + afterDummyMain);
+		String[] args = {
+			"-cp", GlobalRef.clsPath,
+			"-model", GlobalRef.coalModelPath,
+			"-input", GlobalRef.WORKSPACE
+		};
 		
 		ArrayVarItemTypeRef.setup(GlobalRef.apkPath, GlobalRef.clsPath);
 		GlobalRef.arrayTypeRef = ArrayVarItemTypeRef.arrayTypeRef;
@@ -150,32 +163,49 @@ public class Main
 		    parser.parseCommandLine(args, DefaultCommandLineArguments.class);
 		if (commandLineArguments != null) 
 		{
+			AndroidMethodReturnValueAnalyses.registerAndroidMethodReturnValueAnalyses("");
 			analysis.performAnalysis(commandLineArguments);
 		}
 		
 		GlobalRef.uniqStmtKeyValues = DroidRAResult.toUniqStmtKeyValues(HeuristicUnknownValueInfer.getInstance().infer(DroidRAResult.stmtKeyValues));
-		//GlobalRef.uniqStmtKeyValues = DroidRAResult.uniqStmtKeyValues;
 		
 		ReflectionProfile.fillReflectionProfile(DroidRAResult.stmtKeyValues);
 		GlobalRef.rClasses = ReflectionProfile.rClasses;
 		ReflectionProfile.dump();
-		
-		long afterDA = System.currentTimeMillis();
-		System.out.println("==>TIME:" + afterDA);
-		
-		toJson();
-		//loadJsonBack();
+		ReflectionProfile.dump("==>0:");
+	}
+	
+	public static void booster()
+	{
 		ApkBooster.apkBooster(GlobalRef.apkPath, GlobalRef.clsPath, GlobalRef.WORKSPACE);
+	}
+	
+	public static void toReadableText(String apkName)
+	{
+		try 
+		{
+			PrintStream systemPrintStream = System.out;
+					
+			PrintStream fileStream = new PrintStream(new File("droidra_" + apkName + "_" + GlobalRef.pkgName + "_v" + GlobalRef.apkVersionCode + ".txt"));
+			System.setOut(fileStream);
+			
+			System.out.println("The following values were found:");
+		    for (Result result : DroidRAResultProcessor.results) 
+		    {
+		    	((DefaultResult) result).dump();
+		    }
+			
+			System.setOut(systemPrintStream);
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 		
-		long afterBooster = System.currentTimeMillis();
-		System.out.println("==>TIME:" + afterBooster);
-		
-		System.out.println("====>TOTAL_TIME:" + startTime + "," + afterDummyMain + "," + afterDA + "," + afterBooster);
 	}
 	
 	public static void toJson()
 	{
-		String jsonFilePath = "test.json";
+		String jsonFilePath = GlobalRef.jsonFile;
 		
 		Gson gson = new Gson();
 		
@@ -198,7 +228,7 @@ public class Main
 	
 	public static void loadJsonBack()
 	{
-		String jsonFilePath = "test.json";
+		String jsonFilePath = GlobalRef.jsonFile;
 		
 		Gson gson = new Gson();
 		

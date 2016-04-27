@@ -98,7 +98,7 @@ public class ReflectionMethodsUsageStudy extends SceneTransformer
 			"-input", GlobalRef.WORKSPACE
 		};
 		
-        edu.psu.cse.siis.coal.Main.main(args3);
+        edu.psu.cse.siis.coal.Main5COAL.main(args3);
 		
 		JimpleBasedInterproceduralCFG icfg = AnalysisParameters.v().getIcfg();
 		

@@ -40,6 +40,7 @@ public class AnalysisParameters {
   private JimpleBasedInterproceduralCFG icfg;
   private boolean inferNonModeledTypes = true;
   private boolean useShimple = false;
+  private int threadCount;
 
   /**
    * Adds classes to the set of analysis classes. The analysis classes are the set of classes
@@ -125,6 +126,15 @@ public class AnalysisParameters {
   }
 
   /**
+   * Sets the maximum number of threads to be used by the IDE solver.
+   * 
+   * @param threadCount The maximum number of threads.
+   */
+  public void setThreadCount(int threadCount) {
+    this.threadCount = threadCount;
+  }
+
+  /**
    * Determines whether hotspot values should be inferred for values that are not modeled using
    * COAL.
    * 
@@ -141,6 +151,15 @@ public class AnalysisParameters {
    */
   public boolean useShimple() {
     return useShimple;
+  }
+
+  /**
+   * Determines the maximum number of threads that should be used by the program.
+   * 
+   * @return The maximum thread count.
+   */
+  public int getThreadCount() {
+    return threadCount;
   }
 
   /**

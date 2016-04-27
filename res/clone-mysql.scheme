@@ -42,3 +42,11 @@ CREATE TABLE `similar_pairs_simidroid` (
   `deleted` int NOT NULL,
   `similarity` varchar(125)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+
+
+
+CREATE TABLE `dex_size` (
+  `sha256` varchar(125) NOT NULL,
+  `size` varchar(512) NOT NULL,
+  PRIMARY KEY (`sha256`)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;

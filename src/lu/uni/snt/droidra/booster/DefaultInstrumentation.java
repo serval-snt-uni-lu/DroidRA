@@ -5,8 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import lu.uni.snt.droidra.GlobalRef;
+import lu.uni.snt.droidra.model.SimpleStmtValue;
 import lu.uni.snt.droidra.model.StmtKey;
-import lu.uni.snt.droidra.model.StmtValue;
 import lu.uni.snt.droidra.model.UniqStmt;
 import lu.uni.snt.droidra.typeref.ArrayVarValue;
 import soot.Body;
@@ -25,10 +25,10 @@ import soot.jimple.Stmt;
 public abstract class DefaultInstrumentation implements IInstrumentation
 {
 	StmtKey stmtKey = null;
-	StmtValue stmtValue = null;
+	SimpleStmtValue stmtValue = null;
 	UniqStmt uniqStmt = null;
 	
-	public DefaultInstrumentation(StmtKey stmtKey, StmtValue stmtValue, UniqStmt uniqStmt)
+	public DefaultInstrumentation(StmtKey stmtKey, SimpleStmtValue stmtValue, UniqStmt uniqStmt)
 	{
 		this.stmtKey = stmtKey;
 		this.stmtValue = stmtValue;
@@ -186,7 +186,7 @@ public abstract class DefaultInstrumentation implements IInstrumentation
 	public void injectedStmtWrapper(Body body, LocalGenerator localGenerator, Stmt stmt, Stmt nextStmt)
 	{
 		Local opaqueLocal = localGenerator.generateLocal(IntType.v());
-		Unit assignU = Jimple.v().newAssignStmt(opaqueLocal, Jimple.v().newStaticInvokeExpr(Alteration.v().getTryMethod().makeRef()));
+		Unit assignU = Jimple.v().newAssignStmt(opaqueLocal, Jimple.v().newStaticInvokeExpr(Alteration.v().getTryMethod().makeRef(), IntConstant.v(0)));
 		Unit ifU = Jimple.v().newIfStmt(Jimple.v().newEqExpr(IntConstant.v(1), opaqueLocal), nextStmt);
 
 		body.getUnits().insertAfter(ifU, stmt);

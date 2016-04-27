@@ -35,7 +35,7 @@ public class DefaultCommandLineParser extends CommandLineParser<DefaultCommandLi
     System.out.println(COPYRIGHT);
     formatter.printHelp("coal -input <input directory> -classpath <classpath> "
         + "-[c]model <[compiled] model directory or files> [-traversemodeled] "
-        + "[-modeledtypesonly]", options);
+        + "[-modeledtypesonly] [-threadcount <thread count>]", options);
   }
 
 }

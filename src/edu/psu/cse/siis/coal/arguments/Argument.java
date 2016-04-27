@@ -251,8 +251,6 @@ public class Argument implements Serializable {
 
   @Override
   public String toString() {
-	
-	  
     StringBuilder result = new StringBuilder();
     boolean first = true;
     if (getArgnum() != null) {
@@ -267,19 +265,8 @@ public class Argument implements Serializable {
       }
       result.append(") ");
     }
-    
-    /*
-    if (null == field)
-	{
-		return result.toString();
-	}*/
-    
     result.append(getType());
     result.append(" ");
-    
-    System.out.println("type: " + type);
-    System.out.println("field: " + field + " ++++ " + referencedFieldName);
-    
     result.append(getFieldName());
     result.append(" ");
     if (getActions() != null) {

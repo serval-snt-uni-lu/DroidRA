@@ -18,24 +18,20 @@
  */
 package edu.psu.cse.siis.coal;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class Pool<T> {
-  private final Map<T, T> pool = Collections.synchronizedMap(new HashMap<T, T>());
+  private final ConcurrentMap<T, T> pool = new ConcurrentHashMap<>();
 
   public T intern(T element) {
-    synchronized (pool) {
-      T poolT = pool.get(element);
-      if (poolT != null) {
-        return poolT;
-      } else {
-        pool.put(element, element);
-        return element;
-      }
+    T result = pool.putIfAbsent(element, element);
+    if (result == null) {
+      return element;
+    } else {
+      return result;
     }
   }
 

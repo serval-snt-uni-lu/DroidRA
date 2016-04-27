@@ -178,4 +178,9 @@ public class PropagationProblem
   protected EdgeFunction<BasePropagationValue> createAllTopFunction() {
     return ALL_TOP;
   }
+
+  @Override
+  public int numThreads() {
+    return AnalysisParameters.v().getThreadCount();
+  }
 }

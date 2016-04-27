@@ -15,10 +15,20 @@ public class RetargetWithDummyMainGenerator
 {
 	public static void retargetWithDummyMainGeneration(String apkPath, String androidJar, String outputDir) 
 	{
-		retargetWithDummyMainGeneration(apkPath, androidJar, outputDir, null);
+		retargetWithDummyMainGeneration(apkPath, androidJar, outputDir, null, false);
+	}
+	
+	public static void retargetWithDummyMainGeneration(String apkPath, String androidJar, String outputDir, boolean outjar) 
+	{
+		retargetWithDummyMainGeneration(apkPath, androidJar, outputDir, null, true);
 	}
 	
 	public static void retargetWithDummyMainGeneration(String apkPath, String androidJar, String outputDir, String[] additionalDexes) 
+	{
+		retargetWithDummyMainGeneration(apkPath, androidJar, outputDir, additionalDexes, false);
+	}
+	
+	public static void retargetWithDummyMainGeneration(String apkPath, String androidJar, String outputDir, String[] additionalDexes, boolean outjar) 
 	{
 		try 
 		{
@@ -29,13 +39,18 @@ public class RetargetWithDummyMainGenerator
 			e.printStackTrace();
 		}
 		
+		String appName = apkPath;
+		if (appName.contains("/"))
+		{
+			appName = appName.substring(appName.lastIndexOf('/')+1);
+		}
+		
 		G.reset();
 		
 		String[] args2 =
         {
             "-force-android-jar", androidJar,
             "-process-dir", apkPath,
-            "-d", outputDir,
             "-ire",
 			"-pp",
 			"-keep-line-number",
@@ -45,8 +60,17 @@ public class RetargetWithDummyMainGenerator
 			"-p", "wjtp.rdc", "enabled:true",
 			"-src-prec", "apk"
         };
-			
-		Options.v().set_output_format(Options.output_format_class);
+
+		if (outjar)
+		{
+			Options.v().set_output_jar(true);
+			Options.v().set_output_dir(appName + ".jar");
+		}
+		else
+		{
+			Options.v().set_output_format(Options.output_format_class);
+			Options.v().set_output_dir(outputDir);
+		}
 		
 		DummyMainGenerator dmGenerator = new DummyMainGenerator(apkPath);
 		//dmGenerator.setFullMethodCover(true);

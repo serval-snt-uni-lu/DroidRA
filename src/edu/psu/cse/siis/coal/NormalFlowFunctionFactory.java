@@ -35,6 +35,7 @@ import soot.Scene;
 import soot.SootClass;
 import soot.Unit;
 import soot.Value;
+import soot.jimple.ArrayRef;
 import soot.jimple.AssignStmt;
 import soot.jimple.InstanceFieldRef;
 import soot.jimple.NullConstant;
@@ -133,6 +134,11 @@ public class NormalFlowFunctionFactory {
             } else if (source.equivTo(right) || source.equals(zeroValue)
                 || (right instanceof PhiExpr && ((PhiExpr) right).getValues().contains(source))
                 || (right instanceof PiExpr && ((PiExpr) right).getValue().equals(source))) {
+              res.add(left);
+            } else if (right instanceof ArrayRef && source.equivTo(((ArrayRef) right).getBase())) {
+              // Transfer array values to elements.
+              // For example, for statement e = a[i], we transfer all values of a to e. This is not
+              // very precise (we can add precision later if needed) but allows us to proceed.
               res.add(left);
             }
 

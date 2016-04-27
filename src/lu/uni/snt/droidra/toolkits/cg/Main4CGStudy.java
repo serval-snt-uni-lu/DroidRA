@@ -1,7 +1,7 @@
 package lu.uni.snt.droidra.toolkits.cg;
 
 
-public class Main {
+public class Main4CGStudy {
 
 	public static void main(String[] args) 
 	{

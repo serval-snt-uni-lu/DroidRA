@@ -8,11 +8,12 @@ import java.util.Map;
 import java.util.Set;
 
 import lu.uni.snt.droidra.ClassDescription;
-import lu.uni.snt.droidra.DroidRAResult;
 import lu.uni.snt.droidra.GlobalRef;
 import lu.uni.snt.droidra.model.ReflectionProfile;
 import lu.uni.snt.droidra.model.ReflectionProfile.RClass;
+import lu.uni.snt.droidra.model.SimpleStmtValue;
 import lu.uni.snt.droidra.model.StmtKey;
+import lu.uni.snt.droidra.model.StmtType;
 import lu.uni.snt.droidra.model.StmtValue;
 import lu.uni.snt.droidra.model.UniqStmt;
 
@@ -43,7 +44,7 @@ public class ApkBooster extends SceneTransformer
 		String[] args2 =
         {
             "-process-dir", input,
-            "-d", outputDir,
+            "-d", outputDir + "_boosted_apps",
             "-ire",
 			"-pp",
 			"-cp", clsPath,
@@ -100,9 +101,16 @@ public class ApkBooster extends SceneTransformer
 			{
 				if (clsDesc.cls != null && !"(.*)".equals(clsDesc.cls))
 				{
-					if (clsDesc.name != null && ! "(.*)".equals(clsDesc.name))
+					if (stmtValue.getType().equals(StmtType.CONSTRUCTOR_CALL))
 					{
 						tmpClsSet.add(clsDesc);
+					}
+					else
+					{
+						if (clsDesc.name != null && ! "(.*)".equals(clsDesc.name))
+						{
+							tmpClsSet.add(clsDesc);
+						}
 					}
 				}
 			}
@@ -138,6 +146,23 @@ public class ApkBooster extends SceneTransformer
 		
 		InstrumentationUtils.mockSootClasses(ReflectionProfile.rClasses);
 		
+		Set<InstrumentPoint> instrumentPoints = toUniqStmtSimpleStmtValues(GlobalRef.uniqStmtKeyValues);
+		
+		Set<InstrumentPoint> ips = noAndroidSystemInstrumentation(instrumentPoints);
+		
+		Set<InstrumentPoint> ips2 = probeStmtKey(ips);
+		
+		for (InstrumentPoint ip : ips2)
+		{
+			System.out.println("==>IP:" + ip.simpleStmtValue.getClsDesc().cls + "," + ip.simpleStmtValue.getClsDesc().name);
+		}
+		
+		//updateStmtKey much be called before the instrumentation, otherwise, the stmt line number will change because of the instrumentation.
+		
+		instrument(ips);
+		
+		System.out.println("==>CG_SIZE: " + Scene.v().getCallGraph().size());
+		/*
 		Map<UniqStmt, StmtKey> keyPairs = DroidRAResult.toStmtKeys(GlobalRef.uniqStmtKeyValues);
 		GlobalRef.keyPairs = keyPairs;
 		
@@ -171,9 +196,115 @@ public class ApkBooster extends SceneTransformer
 			{
 				instr.instrument();
 			}
-		}
-		
-		System.out.println("==>CG_SIZE: " + Scene.v().getCallGraph().size());
+		}*/
 	}
 
+	public static void instrument(Set<InstrumentPoint> instrumentPoints)
+	{
+		for (InstrumentPoint ip : instrumentPoints)
+		{
+			//ip.updateStmtKey();
+			StmtKey stmtKey = ip.stmtKey;
+			UniqStmt uniqStmt = ip.uniqStmt;
+			SimpleStmtValue stmtValue = ip.simpleStmtValue;
+			
+			
+			IInstrumentation instr = null;
+			switch (stmtValue.getType())
+			{
+			case FIELD_CALL:
+				instr = new FieldCallInstrumentation(stmtKey, stmtValue, uniqStmt);
+				break;
+			case METHOD_CALL:
+				instr = new MethodCallInstrumentation(stmtKey, stmtValue, uniqStmt);
+				break;
+			case CONSTRUCTOR_CALL:
+				instr = new ConstructorCallInstrumentation(stmtKey, stmtValue, uniqStmt);
+				break;
+			case CLASS_NEW_INSTANCE:
+				instr = new ClassNewInstanceCallInstrumentation(stmtKey, stmtValue, uniqStmt);
+				break;
+			default:
+				instr = null;
+			}
+			
+			if (null != instr)
+			{
+				System.out.println(instr);
+				instr.instrument();
+			}
+		}
+	}
+	
+	public static Set<InstrumentPoint> toUniqStmtSimpleStmtValues(Map<UniqStmt, StmtValue> uniqStmtKeyValues)
+	{
+		Set<InstrumentPoint> instrumentPoints = new HashSet<InstrumentPoint>();
+		
+		for (Map.Entry<UniqStmt, StmtValue> entry : uniqStmtKeyValues.entrySet())
+		{
+			UniqStmt uniqStmt = entry.getKey();
+			StmtValue stmtValue = entry.getValue();
+			
+			for (ClassDescription clsDesc : stmtValue.getClsSet())
+			{
+				SimpleStmtValue ssValue = new SimpleStmtValue(stmtValue.getType(), clsDesc);
+				
+				InstrumentPoint ip = new InstrumentPoint();
+				ip.uniqStmt = uniqStmt;
+				ip.simpleStmtValue = ssValue;
+				instrumentPoints.add(ip);
+			}
+		}
+		
+		return instrumentPoints;
+	}
+	
+	public Set<InstrumentPoint> noAndroidSystemInstrumentation(Set<InstrumentPoint> instrumentPoints)
+	{
+		Set<InstrumentPoint> ips = new HashSet<InstrumentPoint>();
+		for (InstrumentPoint ip : instrumentPoints)
+		{
+			String clsName = ip.simpleStmtValue.getClsDesc().cls;
+			String fieldName = ip.simpleStmtValue.getClsDesc().name;
+			
+			if (null == clsName || clsName.isEmpty() || ("(.*)".equals(clsName)))
+			{
+				continue;
+			}
+			
+			
+			
+			if (ip.simpleStmtValue.getType() == StmtType.CLASS_NEW_INSTANCE)
+			{
+				clsName = fieldName;
+				
+				/*
+				if (null == fieldName || fieldName.isEmpty() || ("(.*)".equals(fieldName)))
+				{
+					continue;
+				}*/
+			}
+			
+			if (AndroidPackages.belongTo(clsName))
+			{
+				continue;
+			}
+			
+			ips.add(ip);
+		}
+		
+		return ips;
+	}
+	
+	public Set<InstrumentPoint> probeStmtKey(Set<InstrumentPoint> instrumentPoints)
+	{
+		Set<InstrumentPoint> ips = new HashSet<InstrumentPoint>();
+		for (InstrumentPoint ip : instrumentPoints)
+		{
+			ip.updateStmtKey();
+			ips.add(ip);
+		}
+		
+		return ips;
+	}
 }

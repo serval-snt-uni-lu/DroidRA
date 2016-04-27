@@ -19,8 +19,8 @@
 package edu.psu.cse.siis.coal;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -52,7 +52,7 @@ public abstract class CommandLineParser<A extends CommandLineArguments> {
 
     CommandLine commandLine = null;
     try {
-      org.apache.commons.cli.CommandLineParser commandLineParser = new GnuParser();
+      org.apache.commons.cli.CommandLineParser commandLineParser = new DefaultParser();
       commandLine = commandLineParser.parse(options, args);
     } catch (ParseException e) {
       printHelp(options);
@@ -77,6 +77,20 @@ public abstract class CommandLineParser<A extends CommandLineArguments> {
     commandLineArguments.setTraverseModeled(commandLine.hasOption("traversemodeled"));
     AnalysisParameters.v().setInferNonModeledTypes(!commandLine.hasOption("modeledtypesonly"));
 
+    int threadCount;
+    try {
+      threadCount =
+          commandLineArguments.hasOption("threadcount") ? ((Number) commandLineArguments
+              .getParsedOptionValue("threadcount")).intValue() : Runtime.getRuntime()
+              .availableProcessors();
+    } catch (ParseException exception) {
+      logger.error(
+          "Could not parse thread count: " + commandLineArguments.getOptionValue("threadcount"),
+          exception);
+      return null;
+    }
+    AnalysisParameters.v().setThreadCount(threadCount);
+
     return commandLineArguments;
   }
 
@@ -99,25 +113,27 @@ public abstract class CommandLineParser<A extends CommandLineArguments> {
    * 
    * @param options The command line options object that should be modified.
    */
-  @SuppressWarnings("static-access")
   private void parseDefaultCommandLineArguments(Options options) {
     OptionGroup modelGroup = new OptionGroup();
-    modelGroup.addOption(OptionBuilder.withDescription("Path to the model directory.").hasArg()
-        .withArgName("model directory").create("model"));
-    modelGroup.addOption(OptionBuilder.withDescription("Path to the compiled model.").hasArg()
-        .withArgName("compiled model").create("cmodel"));
+    modelGroup.addOption(Option.builder("model").desc("Path to the model directory.").hasArg()
+        .argName("model directory").build());
+    modelGroup.addOption(Option.builder("cmodel").desc("Path to the compiled model.").hasArg()
+        .argName("compiled model").build());
     modelGroup.setRequired(false);
 
     options.addOptionGroup(modelGroup);
 
-    options.addOption(OptionBuilder.withDescription("The classpath for the analysis.").hasArg()
-        .withArgName("classpath").isRequired().withLongOpt("classpath").create("cp"));
-    options.addOption(OptionBuilder.withDescription("The input code for the analysis.").hasArg()
-        .withArgName("input").isRequired().withLongOpt("input").create("in"));
-    options.addOption(OptionBuilder.withDescription("The output directory or file.").hasArg()
-        .withArgName("output").withLongOpt("output").create("out"));
-    options.addOption(OptionBuilder.withDescription("Propagate through modeled classes.")
-        .hasArg(false).create("traversemodeled"));
+    options.addOption(Option.builder("cp").desc("The classpath for the analysis.").hasArg()
+        .argName("classpath").required().longOpt("classpath").build());
+    options.addOption(Option.builder("in").desc("The input code for the analysis.").hasArg()
+        .argName("input").required().longOpt("input").build());
+    options.addOption(Option.builder("out").desc("The output directory or file.").hasArg()
+        .argName("output").longOpt("output").build());
+    options.addOption(Option.builder("traversemodeled").desc("Propagate through modeled classes.")
+        .hasArg(false).build());
     options.addOption("modeledtypesonly", false, "Only infer modeled types.");
+    options.addOption(Option.builder("threadcount")
+        .desc("The maximum number of threads that should be used.").hasArg()
+        .argName("thread count").type(Number.class).build());
   }
 }

@@ -42,3 +42,22 @@ CREATE TABLE `IParameter` (
   `str` varchar(512) NOT NULL,
   PRIMARY KEY (id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+
+
+CREATE TABLE `distance_results` (
+  `app1_sha256` varchar(125) NOT NULL,
+  `app2_sha256` varchar(125) NOT NULL,
+  `num100` int NOT NULL
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+
+CREATE TABLE `comps` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `comp` varchar(125) NOT NULL,
+  PRIMARY KEY (id)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+
+CREATE TABLE `app2comps` (
+  `sha256` varchar(125) NOT NULL,
+  `id_comp` int NOT NULL,
+  PRIMARY KEY (sha256)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;

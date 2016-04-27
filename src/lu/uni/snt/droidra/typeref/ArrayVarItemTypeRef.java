@@ -112,7 +112,7 @@ public class ArrayVarItemTypeRef
 			{
 				int count = 0;
 
-				System.out.println(b);
+				//System.out.println(b);
 				
 				Map<String, ArrayVarKey> arrayKeyMap = new HashMap<String, ArrayVarKey>();
 				Map<ArrayVarKey, ArrayVarValue> avMap = new HashMap<ArrayVarKey, ArrayVarValue>();
@@ -120,7 +120,7 @@ public class ArrayVarItemTypeRef
 				for (Iterator<Local> localIter = b.getLocals().snapshotIterator(); localIter.hasNext(); )
 				{
 					Local local = localIter.next();
-					System.out.println(local.getType());
+					//System.out.println(local.getType());
 					
 					Type t = local.getType();
 					if (t instanceof ArrayType)
@@ -206,7 +206,7 @@ public class ArrayVarItemTypeRef
 				        		
 				        		
 				        		
-				        		System.out.println("DEBUG:"+ stmt + "," + rightV + "," + index + "," + avValue.values.length);
+				        		//System.out.println("DEBUG:"+ stmt + "," + rightV + "," + index + "," + avValue.values.length);
 				        		
 				        		avValue.values[index] = rightV.toString();
 				        		avValue.types[index] = rightV.getType().toString();

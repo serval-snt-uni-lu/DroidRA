@@ -1,0 +1,12 @@
+com.admob.android
+com.adsmogo
+com.applift.playads
+com.inneractive.api.ads
+com.revmob.ads
+com.swelen.ads
+com.adsdk.sdk
+com.aduwant.ads
+com.google.ads
+com.mopub.mobileads
+com.smartadserver.android
+de.selfadservice

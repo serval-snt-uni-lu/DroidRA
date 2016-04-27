@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lu.uni.snt.droidra.ClassDescription;
+import lu.uni.snt.droidra.model.SimpleStmtValue;
 import lu.uni.snt.droidra.model.StmtKey;
 import lu.uni.snt.droidra.model.StmtType;
-import lu.uni.snt.droidra.model.StmtValue;
 import lu.uni.snt.droidra.model.UniqStmt;
 import soot.Body;
 import soot.Local;
@@ -23,7 +23,7 @@ import soot.jimple.Stmt;
 public class ClassNewInstanceCallInstrumentation extends DefaultInstrumentation
 {
 	public ClassNewInstanceCallInstrumentation(StmtKey stmtKey,
-			StmtValue stmtValue, UniqStmt uniqStmt) {
+			SimpleStmtValue stmtValue, UniqStmt uniqStmt) {
 		super(stmtKey, stmtValue, uniqStmt);
 		// TODO Auto-generated constructor stub
 	}
@@ -47,8 +47,9 @@ public class ClassNewInstanceCallInstrumentation extends DefaultInstrumentation
 		
 		List<Unit> injectedUnits = new ArrayList<Unit>();
 		
-		for (ClassDescription clsDesc : stmtValue.getClsSet())
-		{
+		//for (ClassDescription clsDesc : stmtValue.getClsSet())
+		//{
+		ClassDescription clsDesc = stmtValue.getClsDesc();
 			SootClass sc = Scene.v().getSootClass(clsDesc.name);
 			
 
@@ -84,7 +85,7 @@ public class ClassNewInstanceCallInstrumentation extends DefaultInstrumentation
 				//It does not make sense to come here.
 				System.out.println("There is no <init> method for class " + sc.getName());
 			}
-		}
+		//}
 		
 		for (int i = injectedUnits.size()-1; i >= 0; i--)
 		{

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lu.uni.snt.droidra.ClassDescription;
+import lu.uni.snt.droidra.model.SimpleStmtValue;
 import lu.uni.snt.droidra.model.StmtKey;
 import lu.uni.snt.droidra.model.StmtType;
-import lu.uni.snt.droidra.model.StmtValue;
 import lu.uni.snt.droidra.model.UniqStmt;
 import soot.ArrayType;
 import soot.Body;
@@ -28,7 +28,7 @@ import soot.jimple.Stmt;
 public class ConstructorCallInstrumentation extends DefaultInstrumentation
 {
 
-	public ConstructorCallInstrumentation(StmtKey stmtKey, StmtValue stmtValue,
+	public ConstructorCallInstrumentation(StmtKey stmtKey, SimpleStmtValue stmtValue,
 			UniqStmt uniqStmt) {
 		super(stmtKey, stmtValue, uniqStmt);
 		// TODO Auto-generated constructor stub
@@ -61,8 +61,9 @@ public class ConstructorCallInstrumentation extends DefaultInstrumentation
 		
 		List<Unit> injectedUnits = new ArrayList<Unit>();
 		
-		for (ClassDescription clsDesc : stmtValue.getClsSet())
-		{
+		//for (ClassDescription clsDesc : stmtValue.getClsSet())
+		//{
+		ClassDescription clsDesc = stmtValue.getClsDesc();
 			SootClass sc = Scene.v().getSootClass(clsDesc.cls);
 			
 
@@ -127,7 +128,7 @@ public class ConstructorCallInstrumentation extends DefaultInstrumentation
 			AssignStmt assignStmt = (AssignStmt) stmt;
 			Unit invokeU = Jimple.v().newAssignStmt(assignStmt.getLeftOp(), local);
 			injectedUnits.add(invokeU);
-		}
+		//}
 		
 		for (int i = injectedUnits.size()-1; i >= 0; i--)
 		{
@@ -136,7 +137,7 @@ public class ConstructorCallInstrumentation extends DefaultInstrumentation
 		
 		injectedStmtWrapper(body, localGenerator, stmt, nextStmt);
 		
-		body.validate();
 		System.out.println(body);
+		body.validate();
 	}
 }

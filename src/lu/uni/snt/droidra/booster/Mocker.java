@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import soot.ArrayType;
-import soot.Local;
 import soot.RefType;
 import soot.Scene;
 import soot.SootClass;
@@ -15,7 +14,6 @@ import soot.SootMethod;
 import soot.Type;
 import soot.Unit;
 import soot.VoidType;
-import soot.javaToJimple.LocalGenerator;
 import soot.jimple.Jimple;
 import soot.jimple.JimpleBody;
 
@@ -137,24 +135,28 @@ public class Mocker {
 			//Add body of sm
 			JimpleBody b = Jimple.v().newBody(sm);
 	        sm.setActiveBody(b);
-	        LocalGenerator lg = new LocalGenerator(b);
+	        //LocalGenerator lg = new LocalGenerator(b);
 			{
-				Local rtLoc = lg.generateLocal(RefType.v("java.lang.Object"));
+				b.insertIdentityStmts();
+				
+				
+				
+				//Local rtLoc = lg.generateLocal(RefType.v("java.lang.Object"));
 				
 				//Local param0 = lg.generateLocal(ArrayType.v(RefType.v("java.lang.Object"), 1));
-				Unit param0U = Jimple.v().newIdentityStmt(rtLoc, Jimple.v().newParameterRef(ArrayType.v(RefType.v("java.lang.Object"), 1), 0));
+				//Unit param0U = Jimple.v().newIdentityStmt(rtLoc, Jimple.v().newParameterRef(ArrayType.v(RefType.v("java.lang.Object"), 1), 0));
 				
 				
 				//Unit rtLocAssignU = Jimple.v().newAssignStmt(rtLoc, param0);
 				
-				Unit returnU = Jimple.v().newReturnStmt(rtLoc);
+				Unit returnU = Jimple.v().newReturnStmt(b.getParameterLocal(0));
 				
-				b.getUnits().add(param0U);
+				//b.getUnits().add(param0U);
 				b.getUnits().add(returnU);
 			}
 			
-			b.validate();
 			System.out.println("validation:" + b);
+			b.validate();
 		}	
 		
 		return sm;
@@ -187,14 +189,16 @@ public class Mocker {
 			JimpleBody b = Jimple.v().newBody(sm);
 	        sm.setActiveBody(b);
 			{
+				b.insertIdentityStmts();
 				b.getUnits().add(Jimple.v().newReturnVoidStmt());
 			}
 			
-			b.validate();
 			System.out.println("validation:" + b);
+			b.validate();
 		}
 		
 		//Static init
+		/*
 		methodSubSignature = "void <clinit>()";
 		
 		try
@@ -221,6 +225,7 @@ public class Mocker {
 			b.validate();
 			System.out.println("validation:" + b);
 		}
+		*/
 		
 		//With parameter
 		methodSubSignature = "void <init>(java.lang.Object[])";
@@ -246,20 +251,21 @@ public class Mocker {
 			//Add body
 			JimpleBody b = Jimple.v().newBody(sm);
 	        sm.setActiveBody(b);
-	        LocalGenerator lg = new LocalGenerator(b);
+	        //LocalGenerator lg = new LocalGenerator(b);
 			{
-				Local rtLoc = lg.generateLocal(RefType.v("java.lang.Object"));
+				b.insertIdentityStmts();
 				
+				//Local rtLoc = lg.generateLocal(RefType.v("java.lang.Object"));
 				//Local param0Loc = lg.generateLocal(ArrayType.v(RefType.v("java.lang.Object"), 1));
-				Unit param0U = Jimple.v().newIdentityStmt(rtLoc, Jimple.v().newParameterRef(ArrayType.v(RefType.v("java.lang.Object"), 1), 0));
+				//Unit param0U = Jimple.v().newIdentityStmt(rtLoc, Jimple.v().newParameterRef(ArrayType.v(RefType.v("java.lang.Object"), 1), 0));
 				//Unit assignU = Jimple.v().newAssignStmt(rtLoc, Jimple.v().newCastExpr(param0Loc, RefType.v("java.lang.Object")));
-				b.getUnits().add(param0U);
+				//b.getUnits().add(param0U);
 				//b.getUnits().add(assignU);
 				b.getUnits().add(Jimple.v().newReturnVoidStmt());
 			}
 			
-			b.validate();
 			System.out.println("validation:" + b);
+			b.validate();
 		}
 	}
 }

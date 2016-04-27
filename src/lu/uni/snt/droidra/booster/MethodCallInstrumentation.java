@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lu.uni.snt.droidra.ClassDescription;
+import lu.uni.snt.droidra.model.SimpleStmtValue;
 import lu.uni.snt.droidra.model.StmtKey;
 import lu.uni.snt.droidra.model.StmtType;
-import lu.uni.snt.droidra.model.StmtValue;
 import lu.uni.snt.droidra.model.UniqStmt;
 import soot.ArrayType;
 import soot.Body;
@@ -28,7 +28,7 @@ import soot.jimple.Stmt;
 
 public class MethodCallInstrumentation extends DefaultInstrumentation
 {
-	public MethodCallInstrumentation(StmtKey stmtKey, StmtValue stmtValue, UniqStmt uniqStmt) {
+	public MethodCallInstrumentation(StmtKey stmtKey, SimpleStmtValue stmtValue, UniqStmt uniqStmt) {
 		super(stmtKey, stmtValue, uniqStmt);
 	}
 
@@ -47,10 +47,16 @@ public class MethodCallInstrumentation extends DefaultInstrumentation
 			return;
 		}
 		
+		if (! stmt.containsInvokeExpr())
+		{
+			return;
+		}
+		
 		List<Unit> injectedUnits = new ArrayList<Unit>();
 		
-		for (ClassDescription clsDesc : stmtValue.getClsSet())
-		{
+		//for (ClassDescription clsDesc : stmtValue.getClsSet())
+		//{
+		ClassDescription clsDesc = stmtValue.getClsDesc();
 			if (Scene.v().containsClass(clsDesc.cls))
 			{
 				boolean isStaticMethod = InstrumentationUtils.isStaticReflectiveInvocation(stmt);
@@ -61,6 +67,11 @@ public class MethodCallInstrumentation extends DefaultInstrumentation
 				
 				if (null == calleeMethod)
 				{
+					if (null == clsDesc.name || clsDesc.name.isEmpty() || "(.*)".equals(clsDesc.name))
+					{
+						return;
+					}
+					
 					String methodSubSignature = "java.lang.Object " + clsDesc.name + "(java.lang.Object[])";
 					calleeMethod = Mocker.mockSootMethod(clsDesc.cls, methodSubSignature, isStaticMethod);
 					
@@ -105,6 +116,7 @@ public class MethodCallInstrumentation extends DefaultInstrumentation
 				}
 				
 				InvokeExpr invokeExpr = null;
+				
 				if (isStaticMethod || calleeMethod.isStatic())
 				{
 					invokeExpr = Jimple.v().newStaticInvokeExpr(calleeMethod.makeRef(), args);
@@ -143,7 +155,7 @@ public class MethodCallInstrumentation extends DefaultInstrumentation
 					injectedUnits.add(invokeU);
 				}
 			}
-		}
+		//}
 		
 		for (int i = injectedUnits.size()-1; i >= 0; i--)
 		{

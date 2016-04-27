@@ -37,12 +37,6 @@ public class DefaultResult extends Result {
 
     for (Map.Entry<Unit, Map<Integer, Object>> entry : getResults().entrySet()) {
       Unit unit = entry.getKey();
-      
-      
-      
-      if ("r25 = virtualinvoke r2.<java.lang.reflect.Field: java.lang.Object get(java.lang.Object)>(r3)".equals(unit))
-    	  System.out.println(unit); 
-    	  
       SootMethod method = AnalysisParameters.v().getIcfg().getMethodOf(unit);
       String current =
           method.getDeclaringClass().getName() + "/" + method.getSubSignature() + " : " + unit

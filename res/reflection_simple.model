@@ -104,6 +104,10 @@ class java.lang.reflect.Constructor {
   Class declaringClass_constructor;
   String constructors;
   
+  mod gen <java.lang.Class: java.lang.reflect.Constructor getDeclaredConstructor(java.lang.Class[])> {
+    -1: replace declaringClass_constructor;
+  }
+  
   mod gen <java.lang.Class: java.lang.reflect.Constructor getConstructor(java.lang.Class[])> {
     -1: replace declaringClass_constructor;
   }

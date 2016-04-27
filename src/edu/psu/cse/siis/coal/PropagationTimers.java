@@ -68,4 +68,6 @@ public class PropagationTimers {
   public int classes = 0;
 
   public int pathValues = 0;
+
+  public int separatePathValues = 0;
 }

@@ -22,8 +22,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import soot.jimple.InstanceInvokeExpr;
 import soot.jimple.InvokeExpr;
 import soot.jimple.Stmt;
+import edu.psu.cse.siis.coal.Constants;
 import edu.psu.cse.siis.coal.Model;
 import edu.psu.cse.siis.coal.arguments.LanguageConstraints.Call;
 
@@ -53,6 +55,31 @@ public class MethodReturnValueManager {
   public void registerMethodReturnValueAnalysis(String subSignature,
       MethodReturnValueAnalysis analysis) {
     methodReturnValueAnalysisMap.put(subSignature, analysis);
+  }
+
+  /**
+   * Registers default method return value analyses.
+   */
+  public void registerDefaultMethodReturnValueAnalyses() {
+    registerMethodReturnValueAnalysis("java.lang.String getName()",
+        new MethodReturnValueAnalysis() {
+
+          @Override
+          public Set<Object> computeMethodReturnValues(Call call) {
+            InvokeExpr invokeExpr = call.stmt.getInvokeExpr();
+
+            if (invokeExpr instanceof InstanceInvokeExpr) {
+              InstanceInvokeExpr instanceInvokeExpr = (InstanceInvokeExpr) invokeExpr;
+              if (invokeExpr.getMethod().getDeclaringClass().getName().equals("java.lang.Class")) {
+                return ArgumentValueManager.v()
+                    .getArgumentValueAnalysis(Constants.DefaultArgumentTypes.Scalar.CLASS)
+                    .computeVariableValues(instanceInvokeExpr.getBase(), call.stmt);
+              }
+            }
+
+            return null;
+          }
+        });
   }
 
   /**

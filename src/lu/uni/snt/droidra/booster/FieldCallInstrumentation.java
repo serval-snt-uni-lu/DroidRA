@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Set;
 
 import lu.uni.snt.droidra.ClassDescription;
+import lu.uni.snt.droidra.model.SimpleStmtValue;
 import lu.uni.snt.droidra.model.StmtKey;
 import lu.uni.snt.droidra.model.StmtType;
-import lu.uni.snt.droidra.model.StmtValue;
 import lu.uni.snt.droidra.model.UniqStmt;
 import soot.Body;
 import soot.Local;
@@ -30,7 +30,7 @@ public class FieldCallInstrumentation extends DefaultInstrumentation
 	private Set<String> fieldCallSet = null;
 	private String fieldCallsConfigPath = "res/FieldCalls.txt";
 	
-	public FieldCallInstrumentation(StmtKey stmtKey, StmtValue stmtValue,
+	public FieldCallInstrumentation(StmtKey stmtKey, SimpleStmtValue stmtValue,
 			UniqStmt uniqStmt) {
 		super(stmtKey, stmtValue, uniqStmt);
 		
@@ -73,8 +73,11 @@ public class FieldCallInstrumentation extends DefaultInstrumentation
 		//To store the units that will be injected later
 		List<Unit> injectedUnits = new ArrayList<Unit>();
 		
-		for (ClassDescription clsDesc : stmtValue.getClsSet())
-		{
+		//for (ClassDescription clsDesc : stmtValue.getClsSet())
+		//{
+		
+		ClassDescription clsDesc = stmtValue.getClsDesc();
+		
 			if (Scene.v().containsClass(clsDesc.cls))
 			{
 				SootClass sc = Scene.v().getSootClass(clsDesc.cls);
@@ -144,7 +147,7 @@ public class FieldCallInstrumentation extends DefaultInstrumentation
 					}
 				}
 			}
-		}
+		//}
 		
 		for (int i = injectedUnits.size()-1; i >= 0; i--)
 		{

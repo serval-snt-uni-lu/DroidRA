@@ -132,6 +132,8 @@ public class DummyMainGenerator extends SceneTransformer{
 		
     	LocalGenerator generator = new LocalGenerator(body);
 		
+    	body.insertIdentityStmts();
+    	
 		for (String str : components)
 		{
 			SootClass sc = Scene.v().getSootClass(str);
@@ -171,6 +173,8 @@ public class DummyMainGenerator extends SceneTransformer{
 		{
 			mainMethod = appendNonComponents(mainMethod);
 		}
+		
+		System.out.println(body);
 		
 		body.validate();
 		

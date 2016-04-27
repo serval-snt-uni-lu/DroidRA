@@ -188,7 +188,7 @@ public class ReflectionProfile
 		return rClass;
 	}
 	
-	public static void dump()
+	public static void dump(String prefix)
 	{
 		for (Map.Entry<String, RClass> entry : rClasses.entrySet())
 		{
@@ -197,38 +197,43 @@ public class ReflectionProfile
 			
 			System.out.println("----------------------------------");
 			
-			System.out.println(clsName);
-			System.out.println("Exists: " + rClass.exist);
+			System.out.println(prefix + clsName);
+			System.out.println(prefix + "Exists: " + rClass.exist);
 			
 			if (rClass.fields.size() > 0)
-				System.out.println("Fields: ");
+				System.out.println(prefix + "Fields: ");
 			for (RField rField : rClass.fields)
 			{
-				System.out.println("    " + rField);
+				System.out.println(prefix + "    " + rField);
 			}
 			
 			if (rClass.constructors.size() > 0)
-				System.out.println("Constructors: ");
+				System.out.println(prefix + "Constructors: ");
 			for (RConstructor rConstructor : rClass.constructors)
 			{
-				System.out.println("    " + rConstructor);
+				System.out.println(prefix + "    " + rConstructor);
 			}
 			
 			if (rClass.methods.size() > 0)
-				System.out.println("Methods: ");
+				System.out.println(prefix + "Methods: ");
 			for (RMethod rMethod : rClass.methods)
 			{
-				System.out.println("    " + rMethod);
+				System.out.println(prefix + "    " + rMethod);
 			}
 		}
 		
 		if (simpleStrs.size() > 0)
-			System.out.println("Others: ");	
+			System.out.println(prefix + "Others: ");	
 		
 		for (String key : simpleStrs.keySet())
 		{
-			System.out.println("    " + key + "\n" + "      " + simpleStrs.get(key));
+			System.out.println(prefix + "    " + key + "\n" + prefix + "      " + simpleStrs.get(key));
 		}
+	}
+	
+	public static void dump()
+	{
+		dump("");
 	}
 	
 	public static class RClass

@@ -32,4 +32,7 @@ public class GlobalRef
 	public static Map<String, RClass> rClasses;
 	public static Map<UniqStmt, ArrayVarValue[]> arrayTypeRef;
 	public static Map<UniqStmt, StmtKey> keyPairs;
+	
+	
+	public static final String jsonFile = "refl.json";
 }
