@@ -44,11 +44,12 @@ public class JimpleDumper extends SceneTransformer
 		}
 		
 		Options.v().set_output_format(Options.output_format_jimple);
-			
+		
+		/*
         PackManager.v().getPack("wjtp").add(new Transform("wjtp.JimpleDumper", new ReflectionCallUsageStudy()));
 		
         soot.Main.main(args2);
-
+		 */
 	}
 
 	@Override
