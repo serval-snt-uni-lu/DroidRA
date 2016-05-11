@@ -4,6 +4,7 @@ Android developers heavily use reflection in their apps for legitimate reasons, 
 
 ## News
 [2016-05-11] DroidRA has been made open source.
+
 [2016-04-17] DroidRA paper is accepted to the 2016 International Symposium on Software Testing and Analysis (ISSTA'16), Li Li, Tegawendé F. Bissyandé, Damien Octeau and Jacques Klein, DroidRA: Taming Reflection to Support Whole-Program Analysis of Android Apps
 
 ## Approach
