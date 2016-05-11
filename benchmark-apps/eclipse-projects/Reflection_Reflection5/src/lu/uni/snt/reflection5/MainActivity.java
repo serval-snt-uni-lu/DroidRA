@@ -7,7 +7,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
-import android.view.Menu;
 
 /**
  * @testcase_name Reflection5
@@ -58,12 +57,4 @@ public class MainActivity extends Activity {
 			e.printStackTrace();
 		}
 	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
 }
