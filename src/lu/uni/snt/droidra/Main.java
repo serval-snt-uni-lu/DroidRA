@@ -105,6 +105,12 @@ public class Main
 			apkName = apkName.substring(apkName.lastIndexOf('/')+1);
 		}
 		
+		if (! new File(GlobalRef.WORKSPACE).exists())
+		{
+			File workspace = new File(GlobalRef.WORKSPACE);
+			workspace.mkdirs();
+		}
+		
 		init(apkPath, forceAndroidJar, dexes);
 		
 		long afterDummyMain = System.currentTimeMillis();

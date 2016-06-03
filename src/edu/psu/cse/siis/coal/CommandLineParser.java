@@ -18,6 +18,8 @@
  */
 package edu.psu.cse.siis.coal;
 
+import java.io.File;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
@@ -71,8 +73,7 @@ public abstract class CommandLineParser<A extends CommandLineArguments> {
     commandLineArguments.setModel(commandLine.getOptionValue("model"));
     commandLineArguments.setCompiledModel(commandLine.getOptionValue("cmodel"));
     commandLineArguments.setInput(commandLine.getOptionValue("in"));
-    commandLineArguments.setClasspath(String.format("%s:%s:", commandLine.getOptionValue("cp"),
-        commandLineArguments.getInput()));
+    commandLineArguments.setClasspath(commandLine.getOptionValue("cp") + File.pathSeparator + commandLineArguments.getInput() + File.pathSeparator);
     commandLineArguments.setOutput(commandLine.getOptionValue("out"));
     commandLineArguments.setTraverseModeled(commandLine.hasOption("traversemodeled"));
     AnalysisParameters.v().setInferNonModeledTypes(!commandLine.hasOption("modeledtypesonly"));
