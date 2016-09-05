@@ -144,113 +144,121 @@ public class ArrayVarItemTypeRef
 					Stmt stmt = (Stmt) iterU.next();
 					count++;
 					
-					if (stmt instanceof AssignStmt)
+					try
 					{
-						AssignStmt assignStmt = (AssignStmt) stmt;
-						
-						Value leftV = assignStmt.getLeftOp();
-						Value rightV = assignStmt.getRightOp();
-						
-						if (rightV instanceof NewArrayExpr)
+						if (stmt instanceof AssignStmt)
 						{
-							NewArrayExpr naExpr = (NewArrayExpr) rightV;
-							int size = -1;
-							try
+							AssignStmt assignStmt = (AssignStmt) stmt;
+							
+							Value leftV = assignStmt.getLeftOp();
+							Value rightV = assignStmt.getRightOp();
+							
+							if (rightV instanceof NewArrayExpr)
 							{
-								size = Integer.parseInt(naExpr.getSize().toString());
+								NewArrayExpr naExpr = (NewArrayExpr) rightV;
+								int size = -1;
+								try
+								{
+									size = Integer.parseInt(naExpr.getSize().toString());
+								}
+								catch (Exception ex)
+								{
+									//The size is unknown, try 10 here
+									size = 10;
+								}
+								
+								String key = leftV.toString();
+								
+								ArrayVarKey avKey = arrayKeyMap.get(key);
+								ArrayVarValue avValue = avMap.get(avKey);
+								
+								avKey.length = avValue.length = size;
+								
+								if (size > avValue.types.length)
+								{
+									avValue.types = new String[size+10];
+									avValue.values = new String[size+10];
+								}
+								
+								arrayKeyMap.put(avKey.key, avKey);
+				        		avMap.put(avKey, avValue);
 							}
-							catch (Exception ex)
+							
+							
+							if (leftV instanceof ArrayRef)
 							{
-								//The size is unknown, try 10 here
-								size = 10;
+								ArrayRef ar = (ArrayRef) leftV;
+								
+								int index = -1;
+								try
+								{
+									index = Integer.parseInt(ar.getIndex().toString());
+								}
+								catch (Exception ex)
+								{
+									//The index is unknown, cannot be extracted through simple static analysis
+									index = -1;
+								}
+								
+								if (-1 != index)
+								{
+									String key = ar.getBase().toString();
+					        		
+					        		ArrayVarKey avKey = arrayKeyMap.get(key);
+					        		ArrayVarValue avValue = avMap.get(avKey);
+					        		
+					        		
+					        		
+					        		//System.out.println("DEBUG:"+ stmt + "," + rightV + "," + index + "," + avValue.values.length);
+					        		
+					        		avValue.values[index] = rightV.toString();
+					        		avValue.types[index] = rightV.getType().toString();
+					        		
+					        		arrayKeyMap.put(avKey.key, avKey);
+					        		avMap.put(avKey, avValue);
+								}
 							}
-							
-							String key = leftV.toString();
-							
-							ArrayVarKey avKey = arrayKeyMap.get(key);
-							ArrayVarValue avValue = avMap.get(avKey);
-							avKey.length = avValue.length = size;
-							
-							if (size > avValue.types.length)
-							{
-								avValue.types = new String[size+10];
-								avValue.values = new String[size+10];
-							}
-							
-							arrayKeyMap.put(avKey.key, avKey);
-			        		avMap.put(avKey, avValue);
 						}
 						
-						
-						if (leftV instanceof ArrayRef)
+						if (stmt.containsInvokeExpr())
 						{
-							ArrayRef ar = (ArrayRef) leftV;
+							List<Value> args = stmt.getInvokeExpr().getArgs();
 							
-							int index = -1;
-							try
+							List<ArrayVarValue> avValues = new ArrayList<ArrayVarValue>();
+							
+							boolean existArrayRef = false;
+							
+							for (int i = 0; i < args.size(); i++)
 							{
-								index = Integer.parseInt(ar.getIndex().toString());
-							}
-							catch (Exception ex)
-							{
-								//The index is unknown, cannot be extracted through simple static analysis
-								index = -1;
+								Value arg = args.get(i);
+
+								ArrayVarKey avKey = arrayKeyMap.get(arg.toString());
+								
+								//The variable is an array ref
+								if (null != avKey)
+								{
+									existArrayRef = true;
+									
+									ArrayVarValue avValue = avMap.get(avKey);
+									avValues.add(avValue);
+								}
 							}
 							
-							if (-1 != index)
+							if (existArrayRef)
 							{
-								String key = ar.getBase().toString();
-				        		
-				        		ArrayVarKey avKey = arrayKeyMap.get(key);
-				        		ArrayVarValue avValue = avMap.get(avKey);
-				        		
-				        		
-				        		
-				        		//System.out.println("DEBUG:"+ stmt + "," + rightV + "," + index + "," + avValue.values.length);
-				        		
-				        		avValue.values[index] = rightV.toString();
-				        		avValue.types[index] = rightV.getType().toString();
-				        		
-				        		arrayKeyMap.put(avKey.key, avKey);
-				        		avMap.put(avKey, avValue);
+								UniqStmt uniqStmt = new UniqStmt();
+								uniqStmt.className = b.getMethod().getDeclaringClass().getName();
+								uniqStmt.methodSignature = b.getMethod().getSignature();
+								uniqStmt.stmt = stmt.toString();
+								uniqStmt.stmtSeq = count;
+								
+								arrayTypeRef.put(uniqStmt, avValues.toArray(new ArrayVarValue[] {}));
 							}
 						}
 					}
-					
-					if (stmt.containsInvokeExpr())
+					catch (Exception ex)
 					{
-						List<Value> args = stmt.getInvokeExpr().getArgs();
-						
-						List<ArrayVarValue> avValues = new ArrayList<ArrayVarValue>();
-						
-						boolean existArrayRef = false;
-						
-						for (int i = 0; i < args.size(); i++)
-						{
-							Value arg = args.get(i);
-
-							ArrayVarKey avKey = arrayKeyMap.get(arg.toString());
-							
-							//The variable is an array ref
-							if (null != avKey)
-							{
-								existArrayRef = true;
-								
-								ArrayVarValue avValue = avMap.get(avKey);
-								avValues.add(avValue);
-							}
-						}
-						
-						if (existArrayRef)
-						{
-							UniqStmt uniqStmt = new UniqStmt();
-							uniqStmt.className = b.getMethod().getDeclaringClass().getName();
-							uniqStmt.methodSignature = b.getMethod().getSignature();
-							uniqStmt.stmt = stmt.toString();
-							uniqStmt.stmtSeq = count;
-							
-							arrayTypeRef.put(uniqStmt, avValues.toArray(new ArrayVarValue[] {}));
-						}
+						//TODO: dump the logs
 					}
 				}
 

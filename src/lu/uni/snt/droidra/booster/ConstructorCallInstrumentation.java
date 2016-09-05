@@ -44,7 +44,7 @@ public class ConstructorCallInstrumentation extends DefaultInstrumentation
 		SootMethod sootMethod = stmtKey.getMethod();
 		Stmt stmt = stmtKey.getStmt();
 		
-		if (! (stmt instanceof AssignStmt) )
+		if (! (stmt instanceof AssignStmt) || ! stmt.containsInvokeExpr())
 		{
 			return;
 		}

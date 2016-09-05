@@ -87,10 +87,18 @@ public class DefaultAnalysis<A extends CommandLineArguments> extends Analysis<A>
 
     Options.v().set_src_prec(Options.src_prec_java);
 
-    for (String analysisClass : AnalysisParameters.v().getAnalysisClasses()) {
-      SootClass sootClass = Scene.v().loadClassAndSupport(analysisClass);
-      Scene.v().forceResolve(analysisClass, SootClass.BODIES);
-      sootClass.setApplicationClass();
+    for (String analysisClass : AnalysisParameters.v().getAnalysisClasses()) 
+    {
+    	try
+    	{
+    		SootClass sootClass = Scene.v().loadClassAndSupport(analysisClass);
+    	    Scene.v().forceResolve(analysisClass, SootClass.BODIES);
+    	    sootClass.setApplicationClass();
+    	}
+    	catch (Exception ex)
+    	{
+    		//TODO: need more investigation
+    	}
     }
 
     Scene.v().loadNecessaryClasses();
