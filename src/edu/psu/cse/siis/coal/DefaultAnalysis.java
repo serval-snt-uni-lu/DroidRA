@@ -103,7 +103,8 @@ public class DefaultAnalysis<A extends CommandLineArguments> extends Analysis<A>
 
     Scene.v().loadNecessaryClasses();
 
-    Scene.v().setMainClassFromOptions();
+    //Scene.v().setMainClassFromOptions();
+    Scene.v().setMainClass(Scene.v().getSootClass("DummyMainClass"));
     Scene.v().setEntryPoints(EntryPoints.v().application());
   }
 
